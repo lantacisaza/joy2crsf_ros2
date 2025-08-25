@@ -25,7 +25,7 @@ class PacketsTypes(IntEnum):
    CONFIG_WRITE = 0x2D
    RADIO_ID = 0x3A
 
-
+#sd
 def pwm_to_crsf(pwm_us: int) -> int:
    pwm_us = max(1000, min(2000, pwm_us))
    return int((pwm_us - 1000) * (1792 - 191) / (2000 - 1000) + 191)
