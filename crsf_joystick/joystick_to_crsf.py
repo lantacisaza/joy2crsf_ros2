@@ -5,8 +5,9 @@ import serial
 import time
 import threading
 from enum import IntEnum
-
-
+#-----------------------------------------------------------------------
+# Class and function below correspond for the CRSF packets
+# No need to touch them unless you 100% know what youre doing
 CRSF_SYNC = 0xC8
 PACKET_TYPE = 0x16
 class PacketsTypes(IntEnum):
@@ -24,21 +25,13 @@ class PacketsTypes(IntEnum):
    CONFIG_READ = 0x2C
    CONFIG_WRITE = 0x2D
    RADIO_ID = 0x3A
-
-#sd
 def pwm_to_crsf(pwm_us: int) -> int:
    pwm_us = max(1000, min(2000, pwm_us))
    return int((pwm_us - 1000) * (1792 - 191) / (2000 - 1000) + 191)
-
-
 def crsf_validate_frame(frame) -> bool:
    return crc8_data(frame[2:-1]) == frame[-1]
-
-
 def signed_byte(b):
    return b - 256 if b >= 128 else b
-
-
 def crc8_dvb_s2(crc, a):
    crc ^= a
    for _ in range(8):
@@ -47,17 +40,11 @@ def crc8_dvb_s2(crc, a):
        else:
            crc <<= 1
    return crc & 0xFF
-
-
 def crc8_data(data):
    crc = 0
    for b in data:
        crc = crc8_dvb_s2(crc, b)
    return crc
-
-
-
-
 def pack_crsf_channels(channels):
    b = bytearray(22)
    bits = 0
@@ -76,8 +63,6 @@ def pack_crsf_channels(channels):
            bitpos -= 8
            bytepos += 1
    return b
-
-
 def build_frame(channels):
    payload = bytearray()
    payload.append(PACKET_TYPE)
@@ -88,8 +73,6 @@ def build_frame(channels):
    frame += payload
    frame.append(crc8_data(payload))
    return frame
-
-
 def packCrsfToBytes(channels) -> bytes:
    # channels is in CRSF format! (0-1984)
    # Values are packed little-endianish such that bits BA987654321 -> 87654321, 00000BA9
@@ -120,15 +103,11 @@ def packCrsfToBytes(channels) -> bytes:
 
 
    return result
-
-
 def channelsCrsfToChannelsPacket(channels) -> bytes:
    result = bytearray([CRSF_SYNC, 24, PacketsTypes.RC_CHANNELS_PACKED]) # 24 is packet length
    result += packCrsfToBytes(channels)
    result.append(crc8_data(result[2:]))
    return result
-
-
 def handleCrsfPacket(ptype, data):
    if ptype == PacketsTypes.RADIO_ID and data[5] == 0x10:
        #print(f"OTX sync")
@@ -182,10 +161,8 @@ def handleCrsfPacket(ptype, data):
    else:
        packet = ' '.join(map(hex, data))
        print(f"Unknown 0x{ptype:02x}: {packet}")
-
-
-
-
+#-----------------------------------------------------------------------
+# ROS2 node that converts joystick input to CRSF packets over serial
 class JoyToCRSF(Node):
    def __init__(self):
        super().__init__('joy_to_crsf')
@@ -200,7 +177,7 @@ class JoyToCRSF(Node):
        self.prev_button_4 = None
        self.prev_button_5 = None
 
-
+   # Continuously read CRSF telemetry frames from serial port
    def read_telemetry_loop(self):
        while True:
            if self.ser.in_waiting > 0:
@@ -227,18 +204,17 @@ class JoyToCRSF(Node):
                    break
            time.sleep(0.001)
 
-
+   # ROS2 callback: map joystick axes/buttons to CRSF channel values and send
    def joy_callback(self, msg: Joy):
        current_button_4 = msg.buttons[4]
        current_button_5 = msg.buttons[5]
-       # Only set prev on first message and return
+       #Logic for arm/disarm state and acro/stab state
        if self.prev_button_4 is None:
            self.prev_button_4 = current_button_4
            return
        if self.prev_button_5 is None:
            self.prev_button_5 = current_button_5
            return
-       # Now do toggle logic
        if current_button_4 == 1 and self.prev_button_4 == 0:
            self.arm_state = 2000 if self.arm_state == 1000 else 1000
            print(f"Toggled arm: {self.arm_state}")
@@ -249,31 +225,20 @@ class JoyToCRSF(Node):
 
        self.prev_button_4 = current_button_4
        self.prev_button_5 = current_button_5
-       # Your existing channel code
        roll = pwm_to_crsf(int((-msg.axes[3] * 500) + 1500))
        pitch = pwm_to_crsf(int((msg.axes[4] * 500) + 1500))
        if msg.axes[1] <= 0:
-           #print("first if")
            throttle = pwm_to_crsf(1000)
-
        else:
-           #print("second if")
            throttle = pwm_to_crsf(msg.axes[1] * 1000 + 1000)
-           #print("second", pwm_to_crsf(throttle))
        yaw = pwm_to_crsf(int((-msg.axes[0] * 500) + 1500))
-
-
+       #all the other auxes are not used in this project but you can add them
        aux = [pwm_to_crsf(1000)] * 10
-
-
        channels = [roll, pitch, throttle, yaw, pwm_to_crsf(self.arm_state), pwm_to_crsf(self.angle_state)] + aux
        frame = build_frame(channels)
        self.ser.write(frame)
-
-
-
-
-
+#-----------------------------------------------------------------------
+# ROS2 entry point
 def main(args=None):
    rclpy.init(args=args)
    node = JoyToCRSF()
