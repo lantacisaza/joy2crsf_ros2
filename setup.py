@@ -21,10 +21,6 @@ setup(
     entry_points={
         'console_scripts': [
             'joystick_to_crsf = crsf_joystick.joystick_to_crsf:main',
-            'z_axis_flight = crsf_joystick.z_axis_flight:main',
-            'yaw_pid = crsf_joystick.yaw_pid:main',
-            'manual_with_mocap_cbf = crsf_joystick.manual_with_mocap_cbf:main',
-            'test_violation=crsf_joystick.test_violation:main',
         ],
     },
 )
