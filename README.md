@@ -17,13 +17,27 @@ This repo opens opportunities for further autonomous drone development as PC to 
 
 ---
 ## 🛠 Requirements
+Software:
+- Ubuntu (any vesion or any OS that supports ROS2 Humble)
+- Betaflight software (for debugging)
 - ROS 2 Humble (or newer)
 - Python 3.8+
 - Packages:
   - `rclpy`
   - `sensor_msgs`
   - `pyserial`
-
+Hardware:
+  - Drone (TinyWhoop Modula6 was used)
+  - ELRS TX module 
+  - Power supply (in case TX module consumes more than 5V)
+  - USB cable for TX-PC connection
+  - Joystick (Logitech was used)
+---
+## Hardware setup procedure 
+### 1. Drone
+Flash both Drone and TX module, bind them and prepare setup through Betaflight software (https://www.youtube.com/@JoshuaBardwell), ideally try flying it to make sure it works as supposed to.
+### 2. ELRS TX module
+Connect TX module to PC through USB cable. In case your TX needs more than 5V, connect external power supply with pinout as below:
 ---
 ## ⚙️ Build
 Clone into your workspace and build with `colcon`:
@@ -38,8 +52,9 @@ source install/setup.bash
 ```
 ---
 
-## Usage
 
+## Usage
+FOr your own convinience, use Terminator to be able to see all terminals at once.
 ### 1. Start the joystick driver. Logitech joystick was used.
 In one terminal, run the standard ROS2 joystick driver:
 ```bash
@@ -56,6 +71,16 @@ colcon build
 source install/setup.bash
 ros2 run crsf_joystick joy_to_crsf
 ```
+
+### 4. Confirmation
+Look at the TX module's screen. You should be able to see "Connected" written.
+In case you do not see it, try using the central button of TX to navigate to the "Binding" section and pressing it.
+You should then see the color of the LED on the TX to be changed to BLUE. Use same button to exit settings and youll see "Connected".
+
+### 5. Fly!
+Press LB to Arm the Drone. RB is used to change between ACRO and STAB modes.
+Throttle, PItch, Yaw and Roll should work same as on EdgeTX.
+
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
