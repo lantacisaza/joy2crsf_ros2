@@ -40,7 +40,7 @@ ros2 run crsf_joystick joy_to_crsf
 ## Usage
 
 ### 1. Start the joystick driver. Logitech joystick was used.
-In one terminal, run the standard ROS 2 joystick driver:
+In one terminal, run the standard ROS2 joystick driver:
 ```bash
 ros2 run joy joy_node
 ```
