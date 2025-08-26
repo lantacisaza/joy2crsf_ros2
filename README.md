@@ -17,7 +17,7 @@ This repo opens opportunities for further autonomous drone development as PC to 
 
 ---
 ## 🛠 Requirements
-Software:
+### Software:
 - Ubuntu (any vesion or any OS that supports ROS2 Humble)
 - Betaflight software (for debugging)
 - ROS 2 Humble (or newer)
@@ -26,7 +26,7 @@ Software:
   - `rclpy`
   - `sensor_msgs`
   - `pyserial`
-Hardware:
+### Hardware:
   - Drone (TinyWhoop Modula6 was used)
   - ELRS TX module 
   - Power supply (in case TX module consumes more than 5V)
@@ -38,6 +38,8 @@ Hardware:
 Flash both Drone and TX module, bind them and prepare setup through Betaflight software (https://www.youtube.com/@JoshuaBardwell), ideally try flying it to make sure it works as supposed to.
 ### 2. ELRS TX module
 Connect TX module to PC through USB cable. In case your TX needs more than 5V, connect external power supply with pinout as below:
+![TX power](images/TX.jpg)
+![TX wiring](images/TX_wiring.jpg)
 ---
 ## ⚙️ Build
 Clone into your workspace and build with `colcon`:
@@ -54,7 +56,7 @@ source install/setup.bash
 
 
 ## Usage
-FOr your own convinience, use Terminator to be able to see all terminals at once.
+FOr your own convinience, use Terminator to be able to see all 3 terminals at once.
 ### 1. Start the joystick driver. Logitech joystick was used.
 In one terminal, run the standard ROS2 joystick driver:
 ```bash
@@ -65,7 +67,7 @@ In another terminal, you can check raw joystick data:
 ```bash
 ros2 topic echo /joy
 ```
-### 3. Run the joystick → CRSF node
+### 3. Run the joystick → CRSF node in another terminal
 ```bash
 colcon build 
 source install/setup.bash
@@ -78,9 +80,8 @@ In case you do not see it, try using the central button of TX to navigate to the
 You should then see the color of the LED on the TX to be changed to BLUE. Use same button to exit settings and youll see "Connected".
 
 ### 5. Fly!
-Press LB to Arm the Drone. RB is used to change between ACRO and STAB modes.
-Throttle, PItch, Yaw and Roll should work same as on EdgeTX.
-
+Press LB to Arm the Drone. RB is used to change between ACRO and STAB modes. PItch, Yaw and Roll should work same as on EdgeTX.
+Throttle is set to 0 in neutral position.
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
