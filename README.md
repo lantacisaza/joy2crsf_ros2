@@ -38,6 +38,7 @@ This repo opens opportunities for further autonomous drone development as PC to 
 Flash both Drone and TX module, bind them and prepare setup through Betaflight software (https://www.youtube.com/@JoshuaBardwell), ideally try flying it to make sure it works as supposed to.
 ### 2. ELRS TX module
 Connect TX module to PC through USB cable. In case your TX needs more than 5V, connect external power supply with pinout as below:
+GND is on PIN 2 and V is on PIN 3 (From left to right)
 ![TX power](images/TX.jpg)
 ![TX wiring](images/TX_wiring.jpg)
 ---
