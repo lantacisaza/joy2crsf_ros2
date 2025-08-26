@@ -4,7 +4,8 @@
 ##  Description
 `joy2crsf_ros2` is a ROS 2 package that allows you to control a drone through **ELRS (Crossfire/CRSF protocol)** using a **joystick** connected to your PC.  
 It converts joystick inputs into CRSF channel packets and sends them via serial to an ELRS transmitter module.
-
+In that way you will be able to control your drone manually from Logitech like joystick (instead of EdgeTX).
+This repo opens opportunities for further autonomous drone development as PC to Drone connection settled.
 ---
 
 ## ✨ Features
@@ -30,10 +31,10 @@ Clone into your workspace and build with `colcon`:
 ```bash
 cd ~/ros2_ws/src
 git clone https://github.com/lantacisaza/joy2crsf_ros2.git
+rosdep install --from-paths . --ignore-src -r -y
 cd ~/ros2_ws
 colcon build 
 source install/setup.bash
-ros2 run crsf_joystick joy_to_crsf
 ```
 ---
 
