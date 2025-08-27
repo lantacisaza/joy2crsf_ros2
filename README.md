@@ -84,9 +84,10 @@ ros2 topic echo /joy
 ```
 ### 3. Run the joystick → CRSF node in another terminal
 ```bash
-colcon build 
+colcon build --packages-select crsf_joystick --symlink-install
 source install/setup.bash
-ros2 run crsf_joystick joy_to_crsf
+ros2 run crsf_joystick joystick_to_crsf
+
 ```
 
 ### 4. Confirmation
