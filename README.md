@@ -54,7 +54,21 @@ colcon build
 source install/setup.bash
 ```
 ---
+## Install joystick package
+```bash
+ls /dev/input/js*
+# expect: /dev/input/js0
+sudo apt update
+sudo apt install joystick
+jstest /dev/input/js0   # move sticks; you should see numbers change, then exit
 
+sudo apt install ros-humble-joy ros-humble-teleop-twist-joy
+
+echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+# If you have a dev workspace, also add:
+echo 'source ~/ros2_ws/install/setup.bash' >> ~/.bashrc
+source ~/.bashrc
+```
 
 ## Usage
 FOr your own convinience, use Terminator to be able to see all 3 terminals at once.
